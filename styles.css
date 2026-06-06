@@ -1,0 +1,510 @@
+/*---------------------------------------------------------- BASE CSS ----------------------------------------------------------------------------------------------------- */
+
+/* ---------------------------- CSS RESET ------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background-color: #FAF7F2;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ---------------------------- ELEMENTS ------------------------------- */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+}
+
+a:focus {
+    outline: 2px solid #1E1E1E;
+    outline-offset: 2px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+}
+
+/* ---------------------------- FONTS ------------------------------- */
+@font-face {
+    font-family: "Inter";
+    src: url("../expense-calculator/assets/fonts/inter-regular-webfont.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("../expense-calculator/assets/fonts/inter-medium-webfont.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("../expense-calculator/assets/fonts/inter-semibold-webfont.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Playfair Display";
+    src: url("../expense-calculator/assets/fonts/playfairdisplay-bold-webfont.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ---------------------------- VARIABLES ------------------------------- */
+:root {
+    /* Colors */
+    --color-main-bg: #0F172A;
+    --color-section-alt: #1E293B;
+    --color-text: #F8FAFC;
+
+    --color-accent-primary: #F97316;
+    --color-accent-secondary: #FB923C;
+
+    --color-secondary-light: #FED7AA;
+    --color-secondary-medium: #FB923C;
+    --color-secondary-dark: #C2410C;
+
+    --color-text-muted: #94A3B8;
+
+    --color-glass-light: rgba(255,255,255,0.06);
+    --color-glass-medium: rgba(255,255,255,0.03);
+
+    --gradient-primary: linear-gradient(
+        135deg,
+        #F97316,
+        #FB923C
+    );
+
+    /* Typography */
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Playfair Display', serif;
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* Font Sizes */
+    --fs-h1: 3rem;
+    --fs-h2: 2.25rem;
+    --fs-h3: 1.75rem;
+    --fs-h4: 1.5rem;
+    --fs-h5: 1.25rem;
+    --fs-h6: 1rem;
+    --fs-body: 1rem;
+    --fs-small: 0.875rem;
+
+    /* Line Heights */
+    --lh-h1: 1.2;
+    --lh-h2: 1.3;
+    --lh-h3: 1.35;
+    --lh-body: 1.6;
+
+    /* Letter Spacing */
+    --ls-heading: 0.5px;
+    --ls-body: 0px;
+
+    /* Layout */
+    --container-width: 1200px;
+    --container-padding: 1rem;
+
+    /* Section spacing */
+    --space-section: 3rem;
+    --space-section-lg: 6rem;
+
+    --section-heading-padding: 1rem;
+
+    /* UI */
+    --header-height: 100px;
+    --logo-size: 120px;
+    --icon-size: 84px;
+
+    --radius: 6px;
+    --shadow: 0 8px 20px rgba(0,0,0,0.08);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ---------------------------- TYPOGRAPHY ------------------------------- */
+body {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    letter-spacing: var(--ls-body);
+    color: var(--color-text);
+    background-color: var(--color-main-bg);
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: var(--font-secondary);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+    letter-spacing: var(--ls-heading);
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: var(--fs-h1);
+}
+
+h2 {
+    font-size: var(--fs-h2);
+}
+
+h3 {
+    font-size: var(--fs-h3);
+}
+
+h4 {
+    font-size: var(--fs-h4);
+}
+
+h5 {
+    font-size: var(--fs-h5);
+}
+
+p {
+    font-size: var(--fs-body);
+}
+
+.sub-text {
+    color: var(--color-text-muted);
+    font-size: var(--fs-h5);
+    font-family: var(--font-secondary);
+}
+
+/* ---------------------------- LAYOUT SYSTEM ------------------------------- */
+
+/* Horizontal container ONLY */
+.container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+}
+
+/* Vertical spacing (sections) */
+.section {
+    padding-block: var(--space-section);
+}
+
+.section-lg {
+    padding-block: var(--space-section-lg);
+}
+
+/* Section headings */
+.section-heading {
+    margin-bottom: var(--section-heading-padding);
+}
+
+/* Header height */
+header {
+    height: var(--header-height);
+}
+
+/* ---------------------------- IMAGES ------------------------------- */
+img {
+    display: block;
+    max-width: 100%;
+}
+
+/* ---------------------------- UTILITIES ------------------------------- */
+.flex {
+    display: flex;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* ---------------------------- RESPONSIVE ------------------------------- */
+
+/* Tablet */
+@media (min-width: 768px) {
+    :root {
+        --container-padding: 2rem;
+        --space-section: 5rem;
+        --space-section-lg: 7rem;
+
+        --fs-h1: 3.5rem;
+        --fs-h2: 2.5rem;
+        --fs-h3: 2rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    :root {
+        --container-padding: 3rem;
+        --space-section: 4rem;
+        --space-section-lg: 8rem;
+
+        --fs-h1: 4rem;
+        --fs-h2: 2.75rem;
+        --fs-h3: 2rem;
+        --fs-h4: 1.4rem;
+    }
+
+    a {
+        font-size: 1.2rem;
+    }
+
+    p {
+        font-size: 1.3rem;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+    :root {
+        --container-padding: 4rem;
+    }
+
+    h1 { font-size: 4.5rem; }
+    h2 { font-size: 3rem; }
+    h3 { font-size: 2.5rem; }
+
+    a { font-size: 1.6rem; }
+    p { font-size: 1.4rem; }
+}
+
+@media (min-width: 1920px) {
+    :root {
+        --container-padding: 0rem;
+        --container-width: 1600px;
+    }
+
+    h1 { font-size: 4.5rem; }
+    h2 { font-size: 3rem; }
+    h3 { font-size: 2rem; }
+    h4 {font-size: 1.8rem;}
+
+    a { font-size: 1.6rem; }
+    p { font-size: 1.4rem; }
+}
+
+/* Mobile utilities */
+@media (max-width: 767px) {
+    .flex {
+        flex-direction: column;
+    }
+}
+
+
+/* ---------------------------------------------------------------------- application styles --------------------------------------------------------------*/
+
+.tracker h1{
+    text-align: center;
+    border-bottom: 1px solid var(--color-accent-primary);
+    border-radius: var(--radius);
+}
+
+.tracker label {
+    color: var(--color-secondary-dark);
+    font-weight: var(--font-weight-bold);
+}
+
+#transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.2rem;
+    justify-content: space-between;
+}
+
+select,
+input{
+    width: 100%;
+    height: 2rem;
+    padding: 0.2rem 0.4rem;
+    font-size: var(--fs-body);
+    border: 0 solid var(--color-accent-secondary);
+    border-radius: var(--radius);
+
+   
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+select {
+  border-right: 16px solid transparent
+}
+
+input::placeholder {
+    color: var(--color-text-muted);
+}
+
+select:focus,
+input:focus {
+    outline: 2px solid var(--color-accent-secondary);
+    outline-offset: 2px;
+}
+
+.main-btn {
+    border: 0 solid;
+    border-radius: var(--radius);
+    background: var(--gradient-primary);
+    color: var(--color-section-alt);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--fs-body);
+    text-transform: uppercase;
+    width: 12rem;
+    height: 3rem;
+    text-align: center;
+    margin: 0.1rem auto;
+    box-shadow: 1px 1px 5px var(--color-accent-primary);
+}
+
+#add-trans-btn {
+    margin-top: 2rem;
+}
+
+.delete-icon,
+.edit-icon,
+.save-icon,
+.cancel-icon{
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    color: var(--color-accent-primary);
+}
+
+.input-error {
+    border: 2px solid red;
+    outline: none;
+}
+
+.input-error:focus {
+    box-shadow: 0 0 5px red;
+}
+
+.error-message:empty {
+    display: none;
+}
+
+.error-message{
+    color: red;
+    font-size: 0.85rem;
+    margin-top: -0.7rem;
+    text-align: right;
+}
+
+
+/* -------------------- transaction card styles ---------------------------- */
+
+.display {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.secondary-heading {
+    text-align: center;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--color-accent-primary);
+    border-radius: var(--radius);
+}
+
+.transaction-card {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--color-accent-primary);
+    border-right: 1px solid var(--color-accent-primary);
+    border-radius: 10px;
+    padding: 1rem;
+    position: relative;
+    background-color: var(--color-glass-medium);
+}
+
+.card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card-body p {
+    margin: 0;
+}
+
+.card-inner-body {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.card-header-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.time-stamp {
+    position: absolute;
+    bottom: 0;
+    right: 1rem;
+    color: var(--color-text-muted);
+}
+
