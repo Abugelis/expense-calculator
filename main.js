@@ -6,11 +6,45 @@ let addTransBtn = document.getElementById("add-trans-btn")
 let displayTrans = document.getElementById("display");
 const amountError = document.getElementById("amount-error");
 const descriptionError = document.getElementById("description-error");
+const tabs = document.querySelectorAll(".tab");
+const navButtons = document.querySelectorAll(".nav-item");
+
+const categoryColors = {
+    food: "#f97316",
+    bills: "#3b82f6",
+    travel: "#22c55e",
+    entertainment: "#a855f7",
+    general: "#94a3b8",
+    once_off: "#eab308"
+};
 
 let transactions = [];
 let editingId = null;
 
 addTransBtn.addEventListener("click", addTransaction);
+
+function switchTab(tabName) {
+    tabs.forEach(tab => tab.classList.remove("active"));
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+
+    navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === tabName);
+    });
+
+    if (tabName === "add") {
+        displayTransactions();
+    }
+
+    if (tabName === "analytics") {
+        renderAnalytics();
+    }
+}
+
+navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        switchTab(btn.dataset.view);
+    });
+})
 
 // Create transaction object
 function createTransaction() {
@@ -75,6 +109,7 @@ function addTransaction() {
     document.getElementById("transaction-form").reset();
 
     saveToStorage();
+    renderAnalytics();
     displayTransactions();
 }
 
@@ -84,6 +119,7 @@ function deleteTransaction(id) {
     transactions = transactions.filter((transaction)=> transaction.id !== id);
 
     saveToStorage();
+    renderAnalytics();
     displayTransactions();
 }
 
@@ -231,6 +267,300 @@ description.addEventListener("input", ()=> {
     descriptionError.textContent = "";
     description.classList.remove("input-error");
 });
+
+// ----------------------------------------------------------- Analytics -----------------------------------------//
+
+function animateValue(element, start, end, duration = 600) {
+    let startTimestamp = null;
+
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = start + (end - start) * progress;
+
+        element.textContent = `€${value.toFixed(2)}`;
+
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+
+    window.requestAnimationFrame(step);
+}
+
+function renderAnalytics() {
+
+    const thisMonth = getThisMonthTransactions();
+
+    const income = thisMonth
+        .filter(t => t.type === "income")
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const expense = thisMonth
+        .filter(t => t.type === "expense")
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const balance = income - expense;
+
+    const incomeEl = document.getElementById("analytics-total-income");
+    const expenseEl = document.getElementById("analytics-total-expense");
+    const balanceEl = document.getElementById("analytics-balance");
+
+    if (!incomeEl || !expenseEl || !balanceEl) return;
+
+    animateValue(incomeEl, 0, income);
+    animateValue(expenseEl, 0, expense);
+    animateValue(balanceEl, 0, balance);
+
+    renderCategoryBreakdown();
+    renderDonutChart(income, expense);
+}
+
+function getThisMonthTransactions() {
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    return transactions.filter(t => {
+        const d = new Date(t.date);
+        return d.getMonth() === month && d.getFullYear() === year;
+    });
+}
+
+function renderCategoryBreakdown() {
+    const container = document.getElementById("category-breakdown");
+    container.innerHTML = "";
+
+    const thisMonth = getThisMonthTransactions();
+    const expenses = thisMonth.filter(t => t.type === "expense");
+
+    const categoryTotals = {};
+    let totalExpenses = 0;
+
+    // build totals + total sum
+    expenses.forEach(t => {
+        categoryTotals[t.category] =
+            (categoryTotals[t.category] || 0) + t.amount;
+
+        totalExpenses += t.amount;
+    });
+
+    // handle empty state
+    if (totalExpenses === 0) {
+        container.innerHTML = `<p style="color: var(--color-text-muted)">No expenses this month</p>`;
+        return;
+    }
+
+    Object.entries(categoryTotals)
+        .sort((a, b) => b[1] - a[1]) // biggest first
+        .forEach(([category, amount]) => {
+
+            const percentage = (amount / totalExpenses) * 100;
+
+            const row = document.createElement("div");
+            row.classList.add("category-bar");
+
+            const label = document.createElement("span");
+            label.textContent = category;
+
+            const track = document.createElement("div");
+            track.classList.add("bar-track");
+
+            const fill = document.createElement("div");
+            fill.classList.add("bar-fill");
+
+            const color = categoryColors[category] || "#94a3b8";
+            fill.style.width = `${percentage}%`;
+            fill.style.background = color;
+
+            const value = document.createElement("span");
+            value.textContent = `€${amount.toFixed(0)} (${percentage.toFixed(1)}%)`;
+
+            track.appendChild(fill);
+            row.append(label, track, value);
+
+            container.appendChild(row);
+        });
+}
+
+function renderDonutChart(income, expense) {
+    const canvas = document.getElementById("donutChart");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    const expenses = getThisMonthTransactions().filter(t => t.type === "expense");
+
+    const categoryTotals = {};
+    expenses.forEach(t => {
+        categoryTotals[t.category] =
+            (categoryTotals[t.category] || 0) + t.amount;
+    });
+
+    renderLegend(categoryTotals);
+
+    const total = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 70;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let startAngle = 0;
+
+    Object.entries(categoryTotals).forEach(([category, amount]) => {
+        const slice = (amount / total) * Math.PI * 2;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.fillStyle = categoryColors[category] || "#94a3b8";
+        ctx.arc(centerX, centerY, radius, startAngle, startAngle + slice);
+        ctx.fill();
+
+        startAngle += slice;
+    });
+
+    // donut hole
+    ctx.beginPath();
+    ctx.fillStyle = "#0F172A";
+    ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function renderLegend(categoryTotals) {
+    const legend = document.getElementById("chart-legend");
+    if (!legend) return;
+
+    legend.innerHTML = "";
+
+    const total = Object.values(categoryTotals)
+        .reduce((a, b) => a + b, 0);
+
+    Object.entries(categoryTotals)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([category, amount]) => {
+
+            const percentage = (amount / total) * 100;
+            const color = categoryColors[category] || "#94a3b8";
+
+            const item = document.createElement("div");
+            item.classList.add("legend-item");
+
+            item.innerHTML = `
+                <span class="dot" style="background:${color}"></span>
+                ${category}: €${amount.toFixed(0)} (${percentage.toFixed(1)}%)
+            `;
+
+            legend.appendChild(item);
+        });
+}
+
+// --------------------------------------------------------------- Calculator tab ---------------------------------------------------//
+
+function calculateNetIncome(grossAnnual) {
+    const TAX_CREDITS = 3750;
+
+    const bands = [
+        { limit: 42000, rate: 0.20 },
+        { limit: Infinity, rate: 0.40 }
+    ];
+
+    const uscBands = [
+        { limit: 12012, rate: 0.005 },
+        { limit: 25760, rate: 0.02 },
+        { limit: 70044, rate: 0.045 },
+        { limit: Infinity, rate: 0.08 }
+    ];
+
+    const prsiRate = 0.04;
+
+    // ---------------- Income Tax ----------------
+    let remaining = grossAnnual;
+    let lastLimit = 0;
+    let incomeTax = 0;
+
+    for (let band of bands) {
+        const taxable = Math.min(remaining, band.limit - lastLimit);
+        if (taxable <= 0) break;
+
+        incomeTax += taxable * band.rate;
+
+        remaining -= taxable;
+        lastLimit = band.limit;
+    }
+
+    incomeTax = Math.max(0, incomeTax - TAX_CREDITS);
+
+    // ---------------- USC ----------------
+    let usc = 0;
+    let prev = 0;
+
+    for (let band of uscBands) {
+        const taxable = Math.min(grossAnnual, band.limit) - prev;
+        if (taxable <= 0) break;
+
+        usc += taxable * band.rate;
+        prev = band.limit;
+    }
+
+    // ---------------- PRSI ----------------
+    const prsi = grossAnnual * prsiRate;
+
+    const netAnnual = grossAnnual - incomeTax - usc - prsi;
+    const netMonthly = netAnnual / 12;
+
+    return {
+        grossAnnual,
+        incomeTax,
+        usc,
+        prsi,
+        netAnnual,
+        netMonthly
+    };
+}
+
+function renderCalculator() {
+    const grossInput = document.getElementById("gross-income");
+    const resultBox = document.getElementById("calc-result");
+
+    const gross = Number(grossInput.value);
+    if (!gross || gross <= 0) return;
+
+    const result = calculateNetIncome(gross);
+
+    resultBox.innerHTML = `
+        <div class="calc-card">
+            <p class="label">Gross (Annual)</p>
+            <h2>€${result.grossAnnual.toFixed(2)}</h2>
+        </div>
+
+        <div class="calc-grid">
+            <div class="calc-item tax">
+                <span>Income Tax</span>
+                <strong>€${result.incomeTax.toFixed(2)}</strong>
+            </div>
+
+            <div class="calc-item usc">
+                <span>USC</span>
+                <strong>€${result.usc.toFixed(2)}</strong>
+            </div>
+
+            <div class="calc-item prsi">
+                <span>PRSI</span>
+                <strong>€${result.prsi.toFixed(2)}</strong>
+            </div>
+        </div>
+
+        <hr class="calc-divider" />
+
+        <div class="calc-result-main">
+            <h3>Net (Annual): €${result.netAnnual.toFixed(2)}</h3>
+            <p>Net (Monthly): €${result.netMonthly.toFixed(2)}</p>
+        </div>
+    `;
+}
 
 loadFromStorage();
 displayTransactions();

@@ -342,7 +342,7 @@ img {
 
 /* ---------------------------------------------------------------------- application styles --------------------------------------------------------------*/
 
-.tracker h1{
+.tab h1{
     text-align: center;
     border-bottom: 1px solid var(--color-accent-primary);
     border-radius: var(--radius);
@@ -452,6 +452,7 @@ input:focus {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    padding-bottom: 4rem;
 }
 
 .secondary-heading {
@@ -508,3 +509,295 @@ input:focus {
     color: var(--color-text-muted);
 }
 
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+
+    display:flex;
+    justify-content:space-around;
+
+    padding:12px 0;
+
+    backdrop-filter:blur(20px);
+
+    background:var(--color-glass-light);
+
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.nav-item {
+    color: var(--color-text);
+}
+
+.nav-item svg {
+    color: var(--color-text-muted);
+    padding-bottom: 0.2rem;
+}
+
+.nav-item.active svg,
+.nav-item.active {
+    color:var(--color-accent-primary);
+}
+
+.tab {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+}
+
+.tab.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#tab-analytics h1 {
+    margin-bottom: 2rem;
+}
+
+#tab-analytics {
+    padding-bottom: 4rem;
+}
+
+/* ---------------- iOS style analytics ---------------- */
+
+.analytics-hero {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-radius: 16px;
+    background: var(--color-glass-light);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(20px);
+}
+
+.analytics-hero h1 {
+    font-size: 2.8rem;
+    margin: 0.5rem 0 0;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.analytics-card {
+    padding: 1rem;
+    border-radius: 14px;
+    background: var(--color-glass-medium);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.analytics-card,
+.analytics-hero {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.analytics-card .label {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.analytics-card h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1.6rem;
+}
+
+.analytics-card.income h2 {
+    color: #22c55e;
+}
+
+.analytics-card.expense h2 {
+    color: #ef4444;
+}
+
+.analytics-title {
+    margin: 1.5rem 0 1rem;
+}
+
+/* category bars */
+.category-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.category-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bar-track {
+    flex: 1;
+    height: 8px;
+    margin: 0 1rem;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: 999px;
+}
+
+.donut-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.legend-item .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-item.income .dot {
+    background: #22c55e;
+}
+
+.legend-item.expense .dot {
+    background: #ef4444;
+}
+
+.donut-chart {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 16px;
+    background: var(--color-glass-light);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(20px);
+    margin-top: 2rem;
+}
+
+/* ---------------- CALCULATOR STYLES ---------------- */
+
+#tab-calculator {
+    padding-bottom: 4rem;
+}
+
+#tab-calculator h1 {
+    margin-bottom: 2rem;
+}
+
+#tab-calculator .form-group label {
+    color: var(--color-secondary-dark);
+    font-weight: var(--font-weight-bold);
+}
+
+.btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+#calc-result {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.calc-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: var(--color-glass-light);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: fadeIn 0.3s ease;
+}
+
+.calc-card .label {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.calc-card h2 {
+    margin-top: 0.5rem;
+    font-size: 2rem;
+    color: var(--color-accent-primary);
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.calc-item {
+    padding: 1rem;
+    border-radius: 14px;
+    background: var(--color-glass-medium);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.calc-item span {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.calc-item strong {
+    font-size: 1.1rem;
+}
+
+.calc-item.tax strong {
+    color: #ef4444;
+}
+
+.calc-item.usc strong {
+    color: #f97316;
+}
+
+.calc-item.prsi strong {
+    color: #a855f7;
+}
+
+.calc-divider {
+    border: none;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 0.5rem 0;
+}
+
+.calc-result-main {
+    text-align: center;
+}
+
+.calc-result-main h3 {
+    color: #22c55e;
+    margin-bottom: 0.3rem;
+}
